@@ -167,10 +167,10 @@ public class OptionsGUI extends JFrame {
         panel.add(GUIUtil.createSeparator());
 
         panel.add(GUIUtil.createSpacer());
-        panel.add(GUIUtil.leftJustify(GUIUtil.createCheckBoxFromOption("Use Freeze Filter", "Freezes the instance on the OBS preview - workaround for \"sky bug\"", "useFreezeFilter", b -> this.reload())));
+        panel.add(GUIUtil.leftJustify(GUIUtil.createCheckBoxFromOption("Use Freeze Filter (Village)", "Freezes the instance on the world creation screen", "useFreezeFilter", b -> this.reload())));
         if (options.useFreezeFilter) {
             panel.add(GUIUtil.createSpacer());
-            panel.add(GUIUtil.leftJustify(GUIUtil.createValueChangerButton("freezePercent", "Freeze Filter Activation Percent", this, "%")));
+            panel.add(GUIUtil.leftJustify(GUIUtil.createValueChangerButton("freezePercent", "Freeze Filter Activation ms after beginning of world creation", this, " ms")));
         }
         panel.add(GUIUtil.createSpacer());
         panel.add(GUIUtil.leftJustify(new JLabel("This option requires the OBS Freeze Filter plugin.")));
