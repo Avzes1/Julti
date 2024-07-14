@@ -3,6 +3,7 @@ package xyz.duncanruns.julti.instance;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.JultiOptions;
+import xyz.duncanruns.julti.instance.InstanceState;
 import xyz.duncanruns.julti.instance.InstanceState.InWorldState;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 import xyz.duncanruns.julti.util.FileUtil;
@@ -30,7 +31,8 @@ public class StateTracker {
     private final long[] lastStartArr;
     private final long[] lastOccurrenceArr;
 
-
+    private boolean freeze = false;
+    
     public StateTracker(Path path, Runnable onStateChange, Runnable onPercentageUpdate) {
         this.path = path;
         this.onStateChange = onStateChange;
@@ -202,14 +204,19 @@ public class StateTracker {
     public boolean shouldFreeze() {
         JultiOptions options = JultiOptions.getJultiOptions();
 
-        if (!options.useFreezeFilter ||
-                this.isCurrentState(InstanceState.TITLE) ||
-                this.isCurrentState(InstanceState.WAITING) ||
-                this.isCurrentState(InstanceState.GENERATING)) {
+        if (!options.useFreezeFilter || this.isCurrentState(InstanceState.TITLE))
             return false;
+        
+        if(this.isCurrentState(InstanceState.WAITING) && !this.isCurrentState(InstanceState.TITLE)) {
+        	freeze = false;
         }
 
-        return (int) this.getLoadingPercent() >= options.freezePercent;
+        
+        if(this.isCurrentState(InstanceState.GENERATING) && (System.currentTimeMillis() - this.getLastStartOf(InstanceState.GENERATING) >= ((long)JultiOptions.getJultiOptions().freezePercent))) {
+        	freeze = true;
+        }
+        
+        return freeze;
     }
 
     public boolean isResettable() {
